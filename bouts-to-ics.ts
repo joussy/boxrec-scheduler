@@ -21,31 +21,19 @@ export class BoxerToIcs {
                 event.setDescription('Titles to defend: ' + bout.titles.join(' // '));
                 return event;
             }
-            //    attendees: [
-            //        { name: boxer.name },
-            //        { name: bout.opponent }
-            //    ],
-            //    categories: ['Boxing'],
-            //    alarms: [
-            //        { action: 'DISPLAY', trigger: '-PT24H', description: 'Reminder', repeat: true, duration: 'PT15M' },
-            //        { action: 'AUDIO', trigger: '-PT30M' }
-            //    ]
-            //});
         });
     }
 
     fromIds(ids: string[]): Promise<string> {
+        var idsClean = [...new Set(ids.map(id => parseInt(id)))]; //unique values
         var thisObj = this;
         var promiseList = [];
-        for (var i = 0; i < ids.length; i++) {
-            promiseList.push(box.findById(parseInt(ids[i])));
-        }
+        promiseList = idsClean.map(id => { return box.findById(id) });
         return new Promise<string>((resolve, reject) => {
             Promise.all(promiseList).then(boxers => {
                 var ical = new icalendar.iCalendar();
                 var events = [];
                 boxers.forEach(boxer => events.push(...thisObj.convert(boxer, false)));
-                //var ret = "".concat(...boxers.map(boxer => thisObj.convert(boxer, false)));
                 events.forEach(event => ical.addComponent(event));
                 resolve(ical.toString());
             }).catch(x => reject(x));
