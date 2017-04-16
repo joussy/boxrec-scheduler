@@ -1,0 +1,21 @@
+{
+  "name": "boxrec-scheduler",
+  "version": "0.0.0",
+  "description": "boxrec-scheduler",
+  "main": "app.js",
+  "author": {
+    "name": "joussy"
+  },
+  "dependencies": {
+    "@types/promise": "^7.1.30",
+    "cheerio": "^0.22.0",
+    "express": "^4.15.2",
+    "icalendar": "^0.7.1",
+    "request": "^2.81.0"
+  },
+  "devDependencies": {
+    "@types/cheerio": "^0.22.1",
+    "@types/node": "^7.0.12",
+    "@types/request": "0.0.42"
+  }
+}
