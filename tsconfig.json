@@ -6,16 +6,18 @@
     "preserveConstEnums": true,
     "sourceMap": true,
     "declaration": true,
-    "target": "es6",
+    "target": "es2015",
     "types": [ "mocha", "chai", "node" ],
     "typeRoots": [
       "./node_modules/@types"
     ],
+    "lib": ["es2015", "es2015.collection", "es2015.core", "es2015.generator", "es2015.iterable", "es2015.promise"],
     "emitDecoratorMetadata": true,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "outDir": "lib/"
   },
   "include": [
-    "**/*.ts",
+    "src/*.ts",
     "Tests/*.ts"
   ],
   "exclude": [
