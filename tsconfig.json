@@ -1,18 +1,26 @@
 ﻿{
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "es6",
     "noImplicitAny": false,
     "removeComments": true,
     "preserveConstEnums": true,
     "sourceMap": true,
     "declaration": true,
-    "target": "es6"
+    "target": "es6",
+    "types": [ "mocha", "chai", "node" ],
+    "typeRoots": [
+      "./node_modules/@types"
+    ],
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true
   },
   "include": [
-    "**/*.ts"
+    "**/*.ts",
+    "Tests/*.ts"
   ],
   "exclude": [
     "node_modules",
+    "!node_modules/@types",
     "**/*.spec.ts"
   ]
 }

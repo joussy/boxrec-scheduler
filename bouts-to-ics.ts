@@ -25,7 +25,8 @@ export class BoxerToIcs {
     }
 
     fromIds(ids: string[]): Promise<string> {
-        var idsClean = [...new Set(ids.map(id => parseInt(id)))]; //unique values
+        //var idsClean = [...new Set(ids.map(id => parseInt(id)))]; //unique values
+        var idsClean: any = [];
         var thisObj = this;
         var promiseList = [];
         promiseList = idsClean.map(id => { return box.findById(id) });
