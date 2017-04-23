@@ -1,4 +1,6 @@
-﻿# boxrec-scheduler
+<a href="https://travis-ci.org/joussy/boxrec-scheduler"><img src="https://travis-ci.org/joussy/boxrec-scheduler.svg?branch=master" alt="Build Status"/></a>
+
+# boxrec-scheduler
 Convert BoxRec bouts into iCalendar
 
 Example:
