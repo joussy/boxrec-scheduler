@@ -1,5 +1,4 @@
 ﻿import * as BoxRec from './boxrec';
-import * as BoutsToIcs from './bouts-to-ics';
 const http = require('http');
 var boxRec = new BoxRec.BoxRec();
 var url = require('url');

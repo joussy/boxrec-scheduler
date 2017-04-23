@@ -17,11 +17,12 @@
     "@types/request": "0.0.42",
     "chai": "^3.5.0",
     "mocha": "^3.2.0",
-    "typescript": "2.2.2"
+    "typescript": "2.2.2",
+    "ts-node": "^3.0.2"
   },
   "scripts": {
-    "test": "npm run compile:ts && npm run test:mocha",
-    "test:mocha": "mocha lib/Tests",
+    "test": "npm run test:mocha",
+    "test:mocha": "mocha --compilers ts:ts-node/register tests/",
     "compile": "npm run compile:ts",
     "compile:ts": "tsc",
     "start": "tsc src/app.ts"
