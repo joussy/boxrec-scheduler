@@ -2,7 +2,7 @@
   "name": "boxrec-scheduler",
   "version": "0.0.0",
   "description": "boxrec-scheduler",
-  "main": "app.js",
+  "main": "index.js",
   "author": "joussy",
   "dependencies": {
     "cheerio": "^0.22.0",

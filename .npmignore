@@ -3,3 +3,12 @@
 lib/Tests
 .travis.yml
 boxrec-sample.html
+.gitattributes
+.npmignore
+cache.json
+tsconfig.json
+[Tt]ests
+
+#VS Projects
+*.njsproj
+*.sln

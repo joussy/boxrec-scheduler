@@ -1,12 +1,12 @@
 ﻿{
   "compilerOptions": {
-    "module": "es6",
+    "module": "commonjs",
     "noImplicitAny": false,
     "removeComments": true,
     "preserveConstEnums": true,
     "sourceMap": true,
     "declaration": true,
-    "target": "es2015",
+    "target": "es5",
     "types": [ "mocha", "chai", "node" ],
     "typeRoots": [
       "./node_modules/@types"
@@ -17,8 +17,7 @@
     "outDir": "lib/"
   },
   "include": [
-    "src/*.ts",
-    "Tests/*.ts"
+    "src/*.ts"
   ],
   "exclude": [
     "node_modules",

@@ -3,6 +3,7 @@ var cheerio = require('cheerio');
 var fs = require('fs');
 const { URLSearchParams } = require('url');
 var url = require('url');
+import { BoxerToIcs } from './bouts-to-ics';
 //import * as tcheerio from '@types/cheerio';
 
 export class Bout {
@@ -167,6 +168,18 @@ export class BoxRec {
                 var id = parseInt($('cite').first().text().slice(17));
                 thisObj.performSearch(id, false).then(x => resolve(x));
             });
+        });
+    }
+
+    public idstoIcs(ids: number[]): Promise<string> {
+        //var idsClean = [...new Set(ids.map(id => parseInt(id)))]; //unique values
+        var thisObj = this;
+        var promiseList = [];
+        promiseList = ids.map(id => { return this.findById(id) });
+        return new Promise<string>((resolve, reject) => {
+            Promise.all(promiseList).then(boxers => {
+                resolve(BoxerToIcs.fromBoxers(boxers));
+            }).catch(x => reject(x));
         });
     }
 }

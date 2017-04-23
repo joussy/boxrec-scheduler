@@ -1,7 +1,7 @@
 ﻿import * as BoxRec from './boxrec';
 import * as BoutsToIcs from './bouts-to-ics';
 const http = require('http');
-var boutsToIcs = new BoutsToIcs.BoxerToIcs();
+var boxRec = new BoxRec.BoxRec();
 var url = require('url');
 
 
@@ -14,7 +14,9 @@ const server = http.createServer((req, res) => {
     if (params.boxerids == null)
         return res.end('Error');
     var ids = params.boxerids.split(',');
-    boutsToIcs.fromIds(ids).then(data => {
+    var idsClean : number[] = ids.map(id => parseInt(id));
+    //var idsClean = [...new Set(ids.map(id => parseInt(id)))]; //unique values. PLEASE RE-IMPLEMENT THIS LINE
+    boxRec.idstoIcs(idsClean).then(data => {
         res.end(data)
     }).catch(x => {
         res.end("Error")

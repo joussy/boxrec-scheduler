@@ -3,10 +3,10 @@
 
 #Typescript
 *.d.ts
-*.js
 *.js.map
 cache.json
 [Ss]cripts/
+[Ll]ib/
 
 #VS Projects
 *.njsproj
