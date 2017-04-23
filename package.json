@@ -3,9 +3,7 @@
   "version": "0.0.0",
   "description": "boxrec-scheduler",
   "main": "app.js",
-  "author": {
-    "name": "joussy"
-  },
+  "author": "joussy",
   "dependencies": {
     "cheerio": "^0.22.0",
     "icalendar": "^0.7.1",
@@ -13,7 +11,7 @@
   },
   "devDependencies": {
     "@types/chai": "*",
-    "@types/es6-shim":"*",
+    "@types/es6-shim": "*",
     "@types/mocha": "*",
     "@types/node": "^7.0.13",
     "@types/request": "0.0.42",
@@ -23,9 +21,19 @@
   },
   "scripts": {
     "test": "npm run compile:ts && npm run test:mocha",
-    "test:mocha": "node_modules/.bin/mocha lib/Tests",
+    "test:mocha": "mocha lib/Tests",
     "compile": "npm run compile:ts",
-    "compile:ts": "node_modules/.bin/tsc",
-    "start": "node_modules/.bin/tsc src/app.ts"
-  }
+    "compile:ts": "tsc",
+    "start": "tsc src/app.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joussy/boxrec-scheduler.git"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/joussy/boxrec-scheduler/issues"
+  },
+  "homepage": "https://github.com/joussy/boxrec-scheduler#readme"
 }

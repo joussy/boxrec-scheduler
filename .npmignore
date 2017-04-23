@@ -1,0 +1,5 @@
+﻿src
+!lib
+lib/Tests
+.travis.yml
+boxrec-sample.html
