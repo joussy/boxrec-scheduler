@@ -23,7 +23,7 @@
   },
   "scripts": {
     "test": "npm run compile:ts && npm run test:mocha",
-    "test:mocha": "node_modules/.bin/mocha Tests",
+    "test:mocha": "node_modules/.bin/mocha lib/Tests",
     "compile": "npm run compile:ts",
     "compile:ts": "node_modules/.bin/tsc",
     "start": "node_modules/.bin/tsc src/app.ts"
