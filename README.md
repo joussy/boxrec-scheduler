@@ -1,12 +1,51 @@
 <a href="https://travis-ci.org/joussy/boxrec-scheduler"><img src="https://travis-ci.org/joussy/boxrec-scheduler.svg?branch=master" alt="Build Status"/></a>
 
 # boxrec-scheduler
-Convert BoxRec bouts into iCalendar
 
-Example:
+Convert BoxRec bouts into iCalendar. Supported format is BoxRec Global Id.
 
-http://localhost:3000/?boxerids=372003,609795,742000,319725
+For example Lee Haskins global id is 178678 (http://boxrec.com/boxer/178678). The following sample will convert all his bouts to Ical format:
+```javascript
+const boxRec = require('boxrec-scheduler').BoxRec;
+var boxrec = new boxRec();
+boxrec.idstoIcs([178678]).then(icsCalendar => console.log(icsCalendar));
+```
+You can also get Json-formatted data.
+The following code will display boxer informations:
+```javascript
+const boxRec = require('boxrec-scheduler').BoxRec;
+var boxrec = new boxRec();
+boxrec.findById(178678).then(boxer => {
+  var data = JSON.stringify(boxer, null, 4);
+  console.log(data);
+});
+```
+will return information and bouts for Lee Haskins:
+```javascript
+{  
+   "id":178678,
+   "name":"Lee Haskins",
+   "nickname":"Playboy",
+   "record":{  
+      "w":34,
+      "l":3,
+      "d":0
+   },
+   "bouts":[  
+      {  
+         "titles":[  
 
-will return all the bouts from the Global Ids specified as parameters
+         ],
+         "date":"2003-03-06T00:00:00.000Z",
+         "opponent":{  
+            "bouts":[
+            ],
+            "name":"Ankar Miah"
+         },
+         "location":"Ashton Gate (Bristol City FC), Bristol, Avon, United Kingdom"
+      }
+   ]
+}
+```
 
 * Cache implementation: results are stored in a Json file in order to be replayed instead of querying BoxRec website.
