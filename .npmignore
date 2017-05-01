@@ -1,5 +1,4 @@
 ﻿src
-!lib
 lib/Tests
 .travis.yml
 boxrec-sample.html
@@ -7,7 +6,9 @@ boxrec-sample.html
 .npmignore
 cache.json
 tsconfig.json
-[Tt]ests
+tests
+obj
+bin
 
 #VS Projects
 *.njsproj

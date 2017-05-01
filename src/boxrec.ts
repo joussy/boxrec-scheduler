@@ -40,51 +40,70 @@ export class Boxer {
 export class BoxRec {
     cache: Boxer[];
     constructor() {
-        this.cache = [];
-        this.LoadCache();
+        this.cache = null;
     }
 
-    private LoadCache(): void {
-        fs = require('fs');
+    private LoadCache(): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            if (this.cache != null)
+                return resolve();
+            fs = require('fs');
+            var thisObj = this;
+            fs.readFile('cache.json', 'utf8', function (err, data) {
+                if (err) {
+                    console.log("cache doesn't exists, creating one ...");
+                    fs.writeFile('cache.json', [], function (err) {
+                        if (err) {
+                            console.log(err);
+                            return reject();
+                        }
+                        else {
+                            console.log("Cache created!");
+                        }
+                    });
+                }
+                if (typeof (data) == "string" && data.length > 0)
+                    thisObj.cache = <Boxer[]>JSON.parse(data);
+                else
+                    thisObj.cache = [];
+                console.log("Cache loaded!");
+                return resolve();
+            });
+        });
+    }
+
+    private SaveCache(): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            fs.writeFile("cache.json", JSON.stringify(this.cache, null, 4), function (err) {
+                if (err) {
+                    console.log(err);
+                    return reject();
+                }
+                console.log("The file was saved!");
+                return resolve();
+            });
+        });
+    }
+
+    private AppendCache(boxer: Boxer) : Promise<void> {
         var thisObj = this;
-        fs.readFile('cache.json', 'utf8', function (err, data) {
-            if (err) {
-                console.log("cache doesn't exists, creating one ...");
-                fs.writeFile('cache.json', [], function (err) {
-                    if (err) {
-                        console.log(err);
-                    }
-                    else {
-                        console.log("Cache created!");
-                    }
-                });
-            }
-            if (typeof (data) == "string" && data.length > 0)
-                thisObj.cache = <Boxer[]>JSON.parse(data);
-            console.log("Cache loaded!");
+        return new Promise<void>(resolve => {
+            var index = this.cache.findIndex(x => x.id == boxer.id);
+            if (index > -1)
+                thisObj.cache[index] = boxer;
+            else
+                this.cache.push(boxer);
+            this.SaveCache().then(() => resolve());
         });
     }
 
-    private SaveCache(): void {
-        fs.writeFile("cache.json", JSON.stringify(this.cache, null, 4), function (err) {
-            if (err) {
-                return console.log(err);
-            }
-            console.log("The file was saved!");
+    private FindInCache(boxerId: number): Promise<Boxer> {
+        var thisObj = this;
+        return new Promise<Boxer>((resolve, reject) => {
+            this.LoadCache().then(() => {
+                resolve(thisObj.cache.find(x => x.id == boxerId));
+            }).catch(() => reject());
         });
-    }
-
-    private AppendCache(boxer: Boxer) {
-        var index = this.cache.findIndex(x => x.id == boxer.id);
-        if (index > -1)
-            this.cache[index] = boxer;
-        else
-            this.cache.push(boxer);
-        this.SaveCache();
-    }
-
-    private FindInCache(boxerId: number): Boxer {
-        return this.cache.find(x => x.id == boxerId);
     }
 
     private static extractInfo(data: any): Boxer {
@@ -137,18 +156,18 @@ export class BoxRec {
 
     private performSearch(id: number, simulate: boolean): Promise<Boxer> {
         return new Promise<Boxer>((resolve, reject) => {
-            var boxer = this.FindInCache(id);
-            if (boxer != null) {
-                console.log("Entry found in the cache, skipping http request ...");
-                return resolve(boxer);
-            }
-            else {
-                this.performHttpRequest(id, simulate).then(data => {
-                    boxer = BoxRec.extractInfo(data);
-                    this.AppendCache(boxer);
+            this.FindInCache(id).then(boxer => {
+                if (boxer != null) {
+                    console.log("Entry found in the cache, skipping http request ...");
                     return resolve(boxer);
-                }).catch(x => reject(x));
-            }
+                }
+                else {
+                    this.performHttpRequest(id, simulate).then(data => {
+                        boxer = BoxRec.extractInfo(data);
+                        this.AppendCache(boxer).then(() => resolve(boxer));
+                    }).catch(x => reject(x));
+                }
+            });
         });
     }
 

@@ -252,3 +252,4 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+/desktop.ini

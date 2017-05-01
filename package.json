@@ -1,6 +1,6 @@
 {
   "name": "boxrec-scheduler",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "boxrec-scheduler",
   "main": "index.js",
   "author": "joussy",
@@ -25,7 +25,8 @@
     "test:mocha": "mocha --compilers ts:ts-node/register tests/",
     "compile": "npm run compile:ts",
     "compile:ts": "tsc",
-    "start": "tsc src/app.ts"
+    "start": "tsc src/app.ts",
+    "prepublish": "npm run compile:ts"
   },
   "repository": {
     "type": "git",
