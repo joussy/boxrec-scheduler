@@ -4,38 +4,9 @@ var fs = require('fs');
 const { URLSearchParams } = require('url');
 var url = require('url');
 import { BoxerToIcs } from './bouts-to-ics';
-//import * as tcheerio from '@types/cheerio';
-
-export class Bout {
-    opponent: Boxer;
-    titles: string[];
-    location: string;
-    date: Date;
-    constructor() {
-        this.titles = [];
-    }
-}
-
-export class Records {
-    w: number;
-    l: number;
-    d: number;
-    toString() {
-        return `W:${this.w}, L:${this.l}, D:${this.d}`;
-    }
-}
-
-export class Boxer {
-    id: number;
-    name: string;
-    nickname: string;
-    record: Records;
-    bouts: Bout[];
-
-    constructor() {
-        this.bouts = [];
-    }
-}
+import { Boxer } from './boxer';
+import { Record } from './record';
+import { Bout } from './bout';
 
 export class BoxRec {
     cache: Boxer[];
@@ -63,7 +34,7 @@ export class BoxRec {
                     });
                 }
                 if (typeof (data) == "string" && data.length > 0)
-                    thisObj.cache = <Boxer[]>JSON.parse(data);
+                    thisObj.cache = (<any[]>JSON.parse(data)).map(boxerJson => Boxer.fromJSON(boxerJson));
                 else
                     thisObj.cache = [];
                 console.log("Cache loaded!");
@@ -114,7 +85,7 @@ export class BoxRec {
 
         boxer.name = $('.boxerTitle').first().text().trim();
         boxer.nickname = $('span[itemprop="alternateName"]').text();
-        boxer.record = new Records();
+        boxer.record = new Record();
         boxer.record.w = parseInt($('.bgwonBlock').first().text());
         boxer.record.l = parseInt($('.bglostBlock').first().text());
         boxer.record.d = parseInt($('.bgdrawBlock').first().text());

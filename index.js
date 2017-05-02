@@ -1,1 +1,1 @@
-exports.BoxRec = require('./lib/boxrec').BoxRec;
+exports.BoxRec = require('./lib/index').BoxRec;

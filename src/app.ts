@@ -1,8 +1,7 @@
-﻿import * as BoxRec from './boxrec';
+﻿import * as BoxRec from './index';
 const http = require('http');
 var boxRec = new BoxRec.BoxRec();
 var url = require('url');
-
 
 const hostname = '127.0.0.1';
 const port = 3000;

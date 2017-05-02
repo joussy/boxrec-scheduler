@@ -1,6 +1,6 @@
 {
   "name": "boxrec-scheduler",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "boxrec-scheduler",
   "main": "index.js",
   "author": "joussy",

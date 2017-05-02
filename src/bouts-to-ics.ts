@@ -1,12 +1,13 @@
-﻿import * as BoxRec from './boxrec';
+﻿import { Boxer } from './boxer';
+import { Record } from './record';
+import { Bout } from './bout';
+
 var icalendar = require('icalendar');
 
 export class BoxerToIcs {
-    private static convert(boxer: BoxRec.Boxer, upcomingOnly: boolean): any[] {
+    private static convert(boxer: Boxer, upcomingOnly: boolean): any[] {
         return boxer.bouts.map((bout) => {
             //workaround for the JSON Cast, see http://choly.ca/post/typescript-json/
-            if (bout.date != null)
-                bout.date = new Date(bout.date.toString());
             if (bout.date != null
                 && (!upcomingOnly || bout.date > new Date())) {
                 var uid = `${boxer.id}_${bout.opponent.name}_${bout.date.toUTCString()}`.replace(/[^\w\s]/gi, '').replace(/ /g, '_');
@@ -23,7 +24,7 @@ export class BoxerToIcs {
         });
     }
 
-    public static fromBoxers(boxers: BoxRec.Boxer[]): string {
+    public static fromBoxers(boxers: Boxer[]): string {
         var thisObj = this;
         var ical = new icalendar.iCalendar();
         var events = [];
