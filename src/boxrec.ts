@@ -80,24 +80,34 @@ export class BoxRec {
     private static extractInfo(data: any): Boxer {
         var $ = cheerio.load(data);
         var boxer = new Boxer();
-        var myUrl = url.parse($('link[itemprop="url"]').attr('href'));
-        boxer.id = parseInt(myUrl.path.split('/')[2]);
 
-        boxer.name = $('.boxerTitle').first().text().trim();
-        boxer.nickname = $('span[itemprop="alternateName"]').text();
+
+        var boxrecScript = JSON.parse($('script[type="application/ld+json"]').text());
+        
+
+        
+        var pathArray = url.parse(boxrecScript.url).path.split('/')
+        boxer.id = parseInt(pathArray[pathArray.length - 1]);
+
+        boxer.name = boxrecScript.name;
+        boxer.nickname = boxrecScript.alternateName;
+        boxer.birthdate = new Date(boxrecScript.birthDate);
         boxer.record = new Record();
-        boxer.record.w = parseInt($('.bgwonBlock').first().text());
-        boxer.record.l = parseInt($('.bglostBlock').first().text());
-        boxer.record.d = parseInt($('.bgdrawBlock').first().text());
-        boxer.bouts = $('.tBoutList').map(function (i: number, elem) {
+        boxer.record.w = parseInt($('.profileWLD .bgW').first().text());
+        boxer.record.l = parseInt($('.profileWLD .bgL').first().text());
+        boxer.record.d = parseInt($('.profileWLD .bgD').first().text());
+        //$('table.dataTable tr.drawRowBorder')
+        boxer.bouts = $('table.dataTable tr.drawRowBorder').map(function (i: number, elem) {
             var bout = new Bout();
-            bout.date = $('.profileDateWidth', elem).text().length > 0 ? new Date($('.profileDateWidth', elem).text()) : null;
+            var boutId = $(elem).attr('id');
+            bout.date = $('td:nth-of-type(2)', elem).text().length > 0 ? new Date($('td:nth-of-type(2)', elem).text()) : null;
             bout.opponent = new Boxer();
-            bout.opponent.name = $('.boxerLink', elem).text();
-            bout.titles = $('a[href*="boxrec.com/title/"]', elem).map(function (j, titleElem) {
+            bout.opponent.name = $('.personLink', elem).text();
+
+            bout.titles = $(`#second${boutId} a[href*="/title/"]`).map(function (j, titleElem) {
                 return $(titleElem).text();
             }).toArray();
-            bout.location = $('a[href*="boxrec.com/venue/"]', elem).first().text();
+            bout.location = $('td:nth-of-type(2)', elem).text().trim();
             return bout;
         }).toArray();
         return boxer;

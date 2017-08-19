@@ -7,6 +7,7 @@ export class Boxer {
     nickname: string;
     record: Record;
     bouts: Bout[];
+    birthdate: Date;
 
     constructor() {
         this.bouts = [];
@@ -19,6 +20,7 @@ export class Boxer {
         //    bouts = (<any[]>json.bouts).map(boutJson => Bout.fromJSON(boutJson));
         return Object.assign(Object.create(Boxer.prototype), json, {
             record: Record.fromJSON(json.record),
+            birthdate: new Date(json.birthdate),
             bouts: (<any[]>json.bouts).map(boutJson => Bout.fromJSON(boutJson))
         });
     }
