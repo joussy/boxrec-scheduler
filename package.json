@@ -25,7 +25,6 @@
     "test:mocha": "mocha --compilers ts:ts-node/register tests/",
     "compile": "npm run compile:ts",
     "compile:ts": "tsc",
-    "start": "tsc src/app.ts",
     "prepublish": "npm run compile:ts"
   },
   "repository": {
