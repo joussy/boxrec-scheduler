@@ -40,11 +40,15 @@ export class EntityManager {
         return this.connection;
     }
 
-    //Plutot une promise ?
-    SaveBoxer(boxer: Boxer): void {
-        this.connection.then(c => {
-            const boxerRepository = c.getRepository(Boxer);
-            boxerRepository.persist(boxer);
+    SaveBoxer(boxer: Boxer): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            this.connection.then(c => {
+                const boxerRepository = c.getRepository(Boxer);
+                boxerRepository.persist(boxer)
+                    .then(entity => {
+                        resolve();
+                    });
+            }).catch(e => reject(e));
         });
     }
 
@@ -62,6 +66,28 @@ export class EntityManager {
         });
     }
 
-    async runSample() {
+    runSample() {
+        var boxer = new Boxer();
+        boxer.birthdate = new Date(Date.now());
+        boxer.id = 12;
+        boxer.name = "Jean-Robert";
+        boxer.nickname = "José";
+        boxer.record = new Record();
+        boxer.record.d = 1;
+        boxer.record.w = 2;
+        boxer.record.l = 4;
+
+        this.SaveBoxer(boxer).then(x => {
+            this.connection.then(c => {
+                var boxerRepository = c.getRepository(Boxer);
+                var result = boxerRepository.createQueryBuilder("boxer").innerJoinAndSelect("boxer.record", "record").getOne();
+                result
+                    .then(entity => {
+                        console.log(entity.toString());
+                    })
+                    .catch(e => console.log(e));
+            }).catch(e => console.log(e));
+        }).catch(e => console.log(e));
+
     }
 }

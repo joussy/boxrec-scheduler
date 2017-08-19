@@ -1,4 +1,4 @@
-﻿import { Entity, PrimaryColumn, Column, ManyToMany, JoinTable, OneToOne } from "typeorm";
+﻿import { Entity, PrimaryColumn, Column, ManyToOne, JoinTable, OneToOne, JoinColumn } from "typeorm";
 import { Record } from './record';
 import { Bout } from './bout';
 
@@ -14,20 +14,26 @@ export class Boxer {
     @Column("text")
     nickname: string;
 
-    @Column("date")
+    @Column("datetime")
     birthdate: Date;
 
     @OneToOne(type => Record, {
-        cascadeInsert: true
+        cascadeInsert: true, lazy: false
     })
+    @JoinColumn()
     record: Record;
 
-    @ManyToMany(type => Bout, {
-        cascadeInsert: true
+    recordId: number;
+
+    @ManyToOne(type => Bout, {
+        cascadeInsert: true, lazy : false
     })
     @JoinTable()
     bouts: Bout[];
 
+    toString(): string {
+        return JSON.stringify(this, null, 4);
+    }
 
     constructor() {
         this.bouts = [];

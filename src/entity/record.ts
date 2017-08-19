@@ -1,9 +1,9 @@
-﻿import { Entity, PrimaryColumn, Column, ManyToMany, JoinTable, OneToOne } from "typeorm";
+﻿import { Entity, PrimaryColumn, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, OneToOne } from "typeorm";
 
 @Entity()
 export class Record {
 
-    @PrimaryColumn("int", { generated: true })
+    @PrimaryGeneratedColumn()
     id: number;
 
     @Column("number")

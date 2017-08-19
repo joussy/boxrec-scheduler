@@ -1,4 +1,4 @@
-﻿import { Entity, PrimaryColumn, Column, ManyToMany, JoinTable, JoinColumn, OneToOne } from "typeorm";
+﻿import { Entity, PrimaryColumn, Column, JoinTable, JoinColumn, OneToOne } from "typeorm";
 import { Boxer } from './boxer';
 
 @Entity()
@@ -15,7 +15,7 @@ export class Bout {
     @OneToOne(type => Boxer, {
         cascadeInsert: false
     })
-    @JoinTable()
+    @JoinColumn()
     boxer2: Boxer;
 
     //Kept for backward compatibility
@@ -27,7 +27,7 @@ export class Bout {
     @Column("text")
     location: string;
 
-    @Column("Date")
+    @Column("datetime")
     date: Date;
 
     constructor() {
