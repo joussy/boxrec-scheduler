@@ -10,8 +10,8 @@ const boxRec = require('boxrec-scheduler').BoxRec;
 var boxrec = new boxRec();
 boxrec.idstoIcs([178678]).then(icsCalendar => console.log(icsCalendar));
 ```
-You can also get Json-formatted data.
-The following code will display boxer informations:
+You can also generate Json-formatted data.
+The following code will display boxer details:
 ```javascript
 const boxRec = require('boxrec-scheduler').BoxRec;
 var boxrec = new boxRec();
@@ -26,6 +26,7 @@ will return information and bouts for Lee Haskins:
    "id":178678,
    "name":"Lee Haskins",
    "nickname":"Playboy",
+   "birthdate":"1983-11-29T00:00:00.000Z",
    "record":{  
       "w":34,
       "l":3,
