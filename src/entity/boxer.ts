@@ -1,13 +1,33 @@
-﻿import { Record } from './record';
+﻿import { Entity, PrimaryColumn, Column, ManyToMany, JoinTable, OneToOne } from "typeorm";
+import { Record } from './record';
 import { Bout } from './bout';
 
+@Entity()
 export class Boxer {
+    
+    @PrimaryColumn("int", { generated: false })
     id: number;
+
+    @Column("text")
     name: string;
+
+    @Column("text")
     nickname: string;
-    record: Record;
-    bouts: Bout[];
+
+    @Column("date")
     birthdate: Date;
+
+    @OneToOne(type => Record, {
+        cascadeInsert: true
+    })
+    record: Record;
+
+    @ManyToMany(type => Bout, {
+        cascadeInsert: true
+    })
+    @JoinTable()
+    bouts: Bout[];
+
 
     constructor() {
         this.bouts = [];

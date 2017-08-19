@@ -4,10 +4,10 @@ var fs = require('fs');
 const { URLSearchParams } = require('url');
 var url = require('url');
 import { BoxerToIcs } from './bouts-to-ics';
-import { Boxer } from './boxer';
-import { Record } from './record';
-import { Bout } from './bout';
-
+import { Boxer } from './entity/boxer';
+import { Record } from './entity/record';
+import { Bout } from './entity/bout';
+console.log("lol");
 export class BoxRec {
     cache: Boxer[];
     constructor() {

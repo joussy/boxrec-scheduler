@@ -1,7 +1,20 @@
-﻿export class Record {
+﻿import { Entity, PrimaryColumn, Column, ManyToMany, JoinTable, OneToOne } from "typeorm";
+
+@Entity()
+export class Record {
+
+    @PrimaryColumn("int", { generated: true })
+    id: number;
+
+    @Column("number")
     w: number;
+
+    @Column("number")
     l: number;
+
+    @Column("number")
     d: number;
+
     toString() {
         return `W:${this.w}, L:${this.l}, D:${this.d}`;
     }

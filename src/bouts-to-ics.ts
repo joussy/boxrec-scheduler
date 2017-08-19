@@ -1,6 +1,6 @@
-﻿import { Boxer } from './boxer';
-import { Record } from './record';
-import { Bout } from './bout';
+﻿import { Boxer } from './entity/boxer';
+import { Record } from './entity/record';
+import { Bout } from './entity/bout';
 
 var icalendar = require('icalendar');
 
