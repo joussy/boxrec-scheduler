@@ -24,7 +24,7 @@ export class Bout {
     @Column("simple_array")
     titles: string[];
 
-    @Column("text")
+    @Column("text", { nullable: true })
     location: string;
 
     @Column("datetime")

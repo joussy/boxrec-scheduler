@@ -11,10 +11,10 @@ export class Boxer {
     @Column("text")
     name: string;
 
-    @Column("text")
+    @Column("text", { nullable: true })
     nickname: string;
 
-    @Column("datetime")
+    @Column("datetime", { nullable: true })
     birthdate: Date;
 
     @OneToOne(type => Record, {
@@ -26,7 +26,7 @@ export class Boxer {
     recordId: number;
 
     @ManyToOne(type => Bout, {
-        cascadeInsert: true, lazy : false
+        cascadeInsert: false
     })
     @JoinTable()
     bouts: Bout[];

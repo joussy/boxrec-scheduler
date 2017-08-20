@@ -4,88 +4,33 @@ var fs = require('fs');
 const { URLSearchParams } = require('url');
 var url = require('url');
 import { BoxerToIcs } from './bouts-to-ics';
+import { EntityManager } from './entityManager';
 import { Boxer } from './entity/boxer';
 import { Record } from './entity/record';
 import { Bout } from './entity/bout';
-console.log("lol");
+
 export class BoxRec {
     cache: Boxer[];
+    entityManager: EntityManager;
     constructor() {
         this.cache = null;
+        this.entityManager = new EntityManager();
     }
 
-    private LoadCache(): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
-            if (this.cache != null)
-                return resolve();
-            fs = require('fs');
-            var thisObj = this;
-            fs.readFile('cache.json', 'utf8', function (err, data) {
-                if (err) {
-                    console.log("cache doesn't exists, creating one ...");
-                    fs.writeFile('cache.json', [], function (err) {
-                        if (err) {
-                            console.log(err);
-                            return reject();
-                        }
-                        else {
-                            console.log("Cache created!");
-                        }
-                    });
-                }
-                if (typeof (data) == "string" && data.length > 0)
-                    thisObj.cache = (<any[]>JSON.parse(data)).map(boxerJson => Boxer.fromJSON(boxerJson));
-                else
-                    thisObj.cache = [];
-                console.log("Cache loaded!");
-                return resolve();
-            });
-        });
-    }
-
-    private SaveCache(): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
-            fs.writeFile("cache.json", JSON.stringify(this.cache, null, 4), function (err) {
-                if (err) {
-                    console.log(err);
-                    return reject();
-                }
-                console.log("The file was saved!");
-                return resolve();
-            });
-        });
-    }
-
-    private AppendCache(boxer: Boxer) : Promise<void> {
-        var thisObj = this;
-        return new Promise<void>(resolve => {
-            var index = this.cache.findIndex(x => x.id == boxer.id);
-            if (index > -1)
-                thisObj.cache[index] = boxer;
-            else
-                this.cache.push(boxer);
-            this.SaveCache().then(() => resolve());
-        });
+    private AppendCache(boxer: Boxer): Promise<void> {
+        return this.entityManager.SaveBoxer(boxer);
     }
 
     private FindInCache(boxerId: number): Promise<Boxer> {
-        var thisObj = this;
-        return new Promise<Boxer>((resolve, reject) => {
-            this.LoadCache().then(() => {
-                resolve(thisObj.cache.find(x => x.id == boxerId));
-            }).catch(() => reject());
-        });
+        //return this.entityManager.LoadBoxer(boxerId, true);
+        return new Promise<Boxer>(resolve => resolve(null));
     }
 
     private static extractInfo(data: any): Boxer {
         var $ = cheerio.load(data);
         var boxer = new Boxer();
 
-
         var boxrecScript = JSON.parse($('script[type="application/ld+json"]').text());
-        
-
-        
         var pathArray = url.parse(boxrecScript.url).path.split('/')
         boxer.id = parseInt(pathArray[pathArray.length - 1]);
 
@@ -96,18 +41,20 @@ export class BoxRec {
         boxer.record.w = parseInt($('.profileWLD .bgW').first().text());
         boxer.record.l = parseInt($('.profileWLD .bgL').first().text());
         boxer.record.d = parseInt($('.profileWLD .bgD').first().text());
-        //$('table.dataTable tr.drawRowBorder')
         boxer.bouts = $('table.dataTable tr.drawRowBorder').map(function (i: number, elem) {
             var bout = new Bout();
-            var boutId = $(elem).attr('id');
+            bout.id = $(elem).attr('id');
             bout.date = $('td:nth-of-type(2)', elem).text().length > 0 ? new Date($('td:nth-of-type(2)', elem).text()) : null;
-            bout.opponent = new Boxer();
-            bout.opponent.name = $('.personLink', elem).text();
-
-            bout.titles = $(`#second${boutId} a[href*="/title/"]`).map(function (j, titleElem) {
+            bout.boxer1 = boxer;
+            bout.boxer2 = new Boxer();
+            bout.boxer2.name = $('.personLink', elem).text();
+            var opponentUrl = $('a.personLink', elem).attr('href');
+            pathArray = url.parse(opponentUrl).path.split('/')
+            bout.boxer2.id = parseInt(pathArray[pathArray.length - 1]);
+            bout.titles = $(`#second${bout.id} a[href*="/title/"]`).map(function (j, titleElem) {
                 return $(titleElem).text();
             }).toArray();
-            bout.location = $('td:nth-of-type(2)', elem).text().trim();
+            bout.location = $('td:nth-of-type(7)', elem).text().trim();
             return bout;
         }).toArray();
         return boxer;
@@ -148,7 +95,7 @@ export class BoxRec {
                         this.AppendCache(boxer).then(() => resolve(boxer));
                     }).catch(x => reject(x));
                 }
-            });
+            }).catch(e => console.log(e));
         });
     }
 
@@ -175,7 +122,7 @@ export class BoxRec {
         //var idsClean = [...new Set(ids.map(id => parseInt(id)))]; //unique values
         var thisObj = this;
         var promiseList = [];
-        promiseList = ids.map(id => { return this.findById(id) });
+        promiseList = ids.map(id => { return this.simulateFindById(id) });
         return new Promise<string>((resolve, reject) => {
             Promise.all(promiseList).then(boxers => {
                 resolve(BoxerToIcs.fromBoxers(boxers));

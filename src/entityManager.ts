@@ -7,9 +7,8 @@ import { Bout } from './entity/bout';
 const path = require('path');
 
 export class EntityManager {
-    connection:Promise<Connection> = null;
+    connection: Promise<Connection> = null;
     constructor() {
-        console.log(__dirname);
         this.connection = createConnection({
             "driver": {
                 "type": "sqlite",
@@ -31,13 +30,40 @@ export class EntityManager {
                 "subscribersDir": __dirname + "/subscriber"
             }
         });
-        //ATTENTION : GARE A L'ASYNC
-        //    .then(async connection => {
-        //    this.connection = connection;
-        //}).catch(error => console.log("Error: ", error));
     }
+
     getConnection(): Promise<Connection> {
         return this.connection;
+    }
+
+    SaveBouts(bouts: Bout[]): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            //We store related boxers if there are missing from the DB
+            var boxers: Boxer[] = [];
+            bouts.forEach(bout => {
+                if (!boxers.find(boxer => boxer.id == bout.boxer1.id)) {
+                    boxers.push(bout.boxer1);
+                }
+                if (!boxers.find(boxer => boxer.id == bout.boxer2.id)) {
+                    boxers.push(bout.boxer2);
+                }
+            });
+            const boxerRepository = this.connection.then(c => {
+                var boxerRepository = c.getRepository(Boxer);
+                var boxerIds = boxers.map(boxer => boxer.id);
+                var boxer = boxerRepository.findByIds(boxerIds).then(result => {
+                    //We remove boxers that have been already stored
+                    boxers = boxers.filter(boxer => !result.find(r => r.id == boxer.id));
+                    boxerRepository.persist(boxers).then(x => {
+                        //Missing boxers are now stored, we store the bouts
+                        var boutRepository = c.getRepository(Bout);
+                        boutRepository.persist(bouts)
+                            .then(r => resolve())
+                            .catch(e => reject(e));
+                    }).catch(e => reject(e));
+                }).catch(e => reject(e));
+            });
+        });
     }
 
     SaveBoxer(boxer: Boxer): Promise<void> {
@@ -46,23 +72,26 @@ export class EntityManager {
                 const boxerRepository = c.getRepository(Boxer);
                 boxerRepository.persist(boxer)
                     .then(entity => {
-                        resolve();
+                        if (boxer.bouts != null) {
+                            this.SaveBouts(boxer.bouts)
+                                .then(r => resolve())
+                                .catch(e => reject(e));
+                        }
+                        else {
+                            resolve();
+                        }
                     });
             }).catch(e => reject(e));
         });
     }
 
-    LoadBoxer(boxerId: number): Promise<Boxer> {
+    LoadBoxer(boxerId: number, retreiveBouts: boolean): Promise<Boxer> {
         return new Promise<Boxer>((resolve, reject) => {
             this.connection.then(c => {
                 const boxerRepository = c.getRepository(Boxer);
-                var boxer = boxerRepository.findOneById(boxerId);
-                if (!boxer) {
-                    reject();
-                } else {
-                    resolve(boxer);
-                }
-            });
+                var boxer = boxerRepository.createQueryBuilder("boxer").innerJoinAndSelect("boxer.record", "record").getOne();
+                resolve(boxer);
+            }).catch(e => reject(e));
         });
     }
 
