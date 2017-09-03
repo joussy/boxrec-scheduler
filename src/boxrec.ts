@@ -58,13 +58,13 @@ export class BoxRec {
 
     private AppendCache(boxer: Boxer) : Promise<void> {
         var thisObj = this;
-        return new Promise<void>(resolve => {
+        return new Promise<void>((resolve, reject) => {
             var index = this.cache.findIndex(x => x.id == boxer.id);
             if (index > -1)
                 thisObj.cache[index] = boxer;
             else
                 this.cache.push(boxer);
-            this.SaveCache().then(() => resolve());
+            this.SaveCache().then(() => resolve()).catch(x => reject(x));
         });
     }
 
@@ -126,8 +126,8 @@ export class BoxRec {
             }
             else {
                 request('http://boxrec.com/boxer/' + id, function (err, response, body) {
-                    if (typeof id !== 'number')
-                        return reject();
+                    if (err != null)
+                        return reject(err);
                     else
                         return resolve(body);
                 });
@@ -145,8 +145,13 @@ export class BoxRec {
                 else {
                     this.performHttpRequest(id, simulate).then(data => {
                         boxer = BoxRec.extractInfo(data);
-                        this.AppendCache(boxer).then(() => resolve(boxer));
-                    }).catch(x => reject(x));
+                        this.AppendCache(boxer).then(() => resolve(boxer))
+                            .catch(x => {
+                                reject(x)
+                            });
+                    }).catch(x => {
+                        reject(x)
+                    });
                 }
             });
         });
@@ -179,7 +184,9 @@ export class BoxRec {
         return new Promise<string>((resolve, reject) => {
             Promise.all(promiseList).then(boxers => {
                 resolve(BoxerToIcs.fromBoxers(boxers));
-            }).catch(x => reject(x));
+            }).catch(x => {
+                reject(x)
+            });
         });
     }
 }
