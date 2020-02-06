@@ -5,11 +5,12 @@ info:
 servers:
   - url: 'http://localhost:3000'
 paths:
-  /login:
+  /logind:
     get:
       summary: Your GET endpoint
       tags: []
       responses: {}
       operationId: get-login
+    parameters: []
 components:
   schemas: {}
